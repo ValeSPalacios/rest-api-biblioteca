@@ -4,5 +4,5 @@ import { libro } from './controller.js';
 export const router = Router()
 
 router.get('/libros', libro.getAll);
-router.post('/libro', libro.add);
-router.get('/getlibrosxid', libro.getOne);
+router.post('/agregar-libro', libro.add);
+router.get('/mostrar-libro-por-id', libro.getOne);
