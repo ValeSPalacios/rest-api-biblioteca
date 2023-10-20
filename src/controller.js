@@ -25,5 +25,12 @@ class LibroController {
       }
     }
 
+    async update (req, res) {
+      const libro = req.body;
+      const id_libro = parseInt(libro.id);
+      const [result] = await pool.query( `UPDATE Libros SET nombre=(?), autor=(?), categoria=(?), anio_publicacion=(?), ISBN=(?) WHERE id=(?)`,
+                        [libro.nombre, libro.autor, libro.categoria, libro.anio_publicacion, libro.isbn, id_libro]);
+      res.json({"Libro actualizado": result.changedRows});
+    }
 }
 export const libro = new LibroController();
