@@ -6,3 +6,4 @@ export const router = Router()
 router.get('/libros', libro.getAll);
 router.post('/agregar-libro', libro.add);
 router.get('/mostrar-libro-por-id', libro.getOne);
+router.put('/libros', libro.update);
