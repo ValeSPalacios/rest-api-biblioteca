@@ -14,7 +14,6 @@ class LibroController {
         controlarEspaciosEnBlanco(libro);
         const [result] = await pool.query(`INSERT INTO Libros(nombre, autor, categoria, anio_publicacion, ISBN)
             VALUES (?, ?, ?, ? ,?)`, [libro.nombre, libro.autor, libro.categoria, libro.anio_publicacion, libro.ISBN]);
-        
             res.status(201).json ({"ID insertado": result.insertId});
       } catch (e) {
         res.status(404).json({"Error":e});
@@ -24,15 +23,26 @@ class LibroController {
     async getOne (req, res){
       //const libro = req.body;
       //const libro = req.params.id;
-      const id_libro = parseInt(req.params.id);
-      console.log(libro);
-      const [result] = await pool.query(`SELECT * FROM Libros WHERE id=?`, [id_libro]);
-      if (result.length > 0){
-        res.json (result);
+
+      try {
+        const id_libro = parseInt(req.params.id);
+        console.log(libro);
+        const [result] = await pool.query(`SELECT * FROM Libros WHERE id=?`, [id_libro]);
+        if (result.length > 0){
+          res.json (result);
+        }
+        else {
+          res.json({"Error": "No se encontró el libro con el ID insertado."});
+        }
+      } catch(e) {
+
+        // PROBAR SWITCH
+        if(e.errno===1054) {
+          res.json({"Error": "Ha ingresado un valor distinto a un id."});
+        }
+        //res.status(404).json({"Error": e});
       }
-      else {
-        res.json({"Error": "No se encontró un libro con el ID insertado."});
-      }
+
     }
 
     async update (req, res) {
