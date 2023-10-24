@@ -1,5 +1,8 @@
 import {pool} from './database.js';
-import {controlarEspaciosEnBlanco} from './controlar.js';
+import {controlAdd} from './controlErrores.js';
+import {controlDelete} from "./controlErrores.js";
+import {controlGetOne} from "./controlErrores.js";
+import {controlUpdate} from "./controlErrores.js";
 
 class LibroController {
     async getAll (req, res){
@@ -11,7 +14,7 @@ class LibroController {
       try {
         const libro = req.body;
 
-        controlarEspaciosEnBlanco(libro);
+        controlAdd(libro);
         const [result] = await pool.query(`INSERT INTO Libros(nombre, autor, categoria, anio_publicacion, ISBN)
             VALUES (?, ?, ?, ? ,?)`, [libro.nombre, libro.autor, libro.categoria, libro.anio_publicacion, libro.ISBN]);
             res.status(201).json ({"ID insertado": result.insertId});
@@ -21,54 +24,61 @@ class LibroController {
     }
 
     async getOne (req, res){
-      //const libro = req.body;
-      //const libro = req.params.id;
-
       try {
-        const id_libro = parseInt(req.params.id);
-        console.log(libro);
+        const libro = {"id": parseInt(req.params.id)};
+        controlGetOne(libro);
+        const id_libro = parseInt(libro.id);
         const [result] = await pool.query(`SELECT * FROM Libros WHERE id=?`, [id_libro]);
         if (result.length > 0){
           res.json (result);
         }
         else {
-          res.json({"Error": "No se encontró el libro con el ID insertado."});
+          throw (`No existe un libro con el id: ${id_libro}.`);
         }
       } catch(e) {
-
-        // PROBAR SWITCH
         if(e.errno===1054) {
-          res.json({"Error": "Ha ingresado un valor distinto a un id."});
+          res.json({"Error": "Ha ingresado un valor distinto a un número de ID."});
         }
         //res.status(404).json({"Error": e});
       }
-
     }
 
     async update (req, res) {
-      const libro = req.body;
-      const id_libro = parseInt(libro.id);
-      const [result] = await pool.query(`UPDATE Libros SET nombre=(?), autor=(?), categoria=(?), anio_publicacion=(?), ISBN=(?) WHERE id=(?)`,
-                        [libro.nombre, libro.autor, libro.categoria, libro.anio_publicacion, libro.isbn, id_libro]);
-      res.json({"Libro actualizado": result.changedRows});
+      try {
+        //console.log(req.body);
+        const libro = req.body;
+        controlUpdate(libro);
+        const id_libro = parseInt(libro.id);
+        const [result] = await pool.query(`UPDATE Libros SET nombre=(?), autor=(?), categoria=(?), anio_publicacion=(?), ISBN=(?) WHERE id=(?)`,
+        [libro.nombre, libro.autor, libro.categoria, libro.anio_publicacion, libro.ISBN, id_libro]);
+        if(result.affectedRows>0){
+					res.json("¡Libro actualizado!");
+				}else{
+					throw "No se pudo actualizar el libro. Controle que el id sea válido";
+				}
+      } catch(e) {
+        res.status(404).json({"Error": e});
+      }
     }
 
     async delete(req, res) {
       try {
         const libro = req.body;
-        if (!Number.isInteger(libro.id)) throw("Por favor, ingrese un entero positivo para el id");
-        const [result] = await pool.query(`DELETE FROM Libro WHERE id=(?)`, [libro.id]);
+        controlDelete(libro);
+        const isbn = libro.ISBN;
+        const [result] = await pool.query(`DELETE FROM Libros where ISBN=(?)`, isbn);
 
         if (result.affectedRows>0) {
-          res.json(`El libro con id ${libro.id} ha sido eliminado`);
+          res.json(`El libro ha sido eliminado.`);
         } else {
-          res.json(`No existe el libro con id ${libro.id} en la base de datos`);
+          res.json(`No se pudo eliminar el libro. Controle el ISBN ingresado.`);
         }
 
       } catch(e) {
-        console.log(e);
+        //console.log(e);
         res.status(404).json({"Error": e});
       }
     }
 }
+
 export const libro = new LibroController();

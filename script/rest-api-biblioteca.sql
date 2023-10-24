@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-10-2023 a las 03:54:57
+-- Tiempo de generación: 24-10-2023 a las 05:40:10
 -- Versión del servidor: 10.4.25-MariaDB
 -- Versión de PHP: 8.1.10
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `libros` (
   `id` int(11) NOT NULL,
-  `nombre` varchar(30) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
   `autor` varchar(30) NOT NULL,
   `categoria` varchar(30) NOT NULL,
   `anio_publicacion` date NOT NULL,
@@ -41,11 +41,13 @@ CREATE TABLE `libros` (
 --
 
 INSERT INTO `libros` (`id`, `nombre`, `autor`, `categoria`, `anio_publicacion`, `ISBN`) VALUES
-(1, 'El señor de los anillos', 'J. R. R. Tolkien', 'Fantasía', '2013-10-16', '978-92-9'),
-(2, 'El principito', 'Le Petit Prince', 'Fabula', '1940-03-25', '566-92-9'),
-(3, 'Mi planta de naranja lima', 'José Mauro de Vasconcelos', 'Novela', '1968-08-17', '2866-05-9'),
-(4, 'La espada del destino', 'Andrzej Sapkowski', 'Fantasia', '1992-04-12', '9852-08-4'),
-(5, 'El nombre de la rosa', 'Umberto Eco', 'Fantasia', '1980-07-26', '7536-12-4');
+(12, 'Orgullo y prejuicio', 'Jane Austen', 'Romance', '1884-06-04', '9781-25-8'),
+(13, 'El principito', 'Le Petit Prince', 'Fabula', '1940-03-25', '5668-92-9'),
+(14, 'Mi planta de naranja lima', 'José Mauro de Vasconcelos', 'Novela', '1968-08-17', '2866-05-9'),
+(15, 'La espada del destino', 'Andrzej Sapkowski', 'Fantasia', '1992-04-12', '9852-08-4'),
+(17, 'La historia sin fin', 'Michael Ende', 'Fantasía', '1984-10-17', '1234-02-4'),
+(18, 'Árbol del Mar Esmeralda', 'Brandon Sanderson', 'Fantasía', '2023-05-23', '4545-54-8'),
+(20, 'El extraño caso del doctor Jekyll y el señor Hyde', 'Robert Louis Stevenson', 'Ficción Gótica', '1886-10-17', '4555-02-6');
 
 --
 -- Índices para tablas volcadas
@@ -55,7 +57,8 @@ INSERT INTO `libros` (`id`, `nombre`, `autor`, `categoria`, `anio_publicacion`, 
 -- Indices de la tabla `libros`
 --
 ALTER TABLE `libros`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `ISBN` (`ISBN`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -65,7 +68,7 @@ ALTER TABLE `libros`
 -- AUTO_INCREMENT de la tabla `libros`
 --
 ALTER TABLE `libros`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
